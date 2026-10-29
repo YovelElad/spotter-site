@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>תוכנית אימונים בספוטר</title>
-<meta property="og:title" content="תוכנית אימונים בספוטר">
-<meta property="og:description" content="קיבלת תוכנית אימונים מחבר. פתחו אותה באפליקציה.">
+<title>שיתוף מספוטר</title>
+<meta property="og:title" content="שיתוף מספוטר">
+<meta property="og:description" content="קיבלת תוכנית או אימון מחבר. פתחו באפליקציה.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -36,7 +36,7 @@ h1 { font-size: 30px; font-weight: 400; }
 <main>
   <div class="brand"><span class="logo">S</span>Spotter</div>
   <div id="loading" class="meta">טוען…</div>
-  <div id="missing" class="missing" hidden>התוכנית לא נמצאה. אולי הקישור לא שלם, או שמי ששיתף הפסיק את השיתוף.</div>
+  <div id="missing" class="missing" hidden>לא מצאנו את מה ששיתפו. אולי הקישור לא שלם, או שמי ששיתף הפסיק את השיתוף.</div>
   <section id="program" hidden style="display: contents">
     <div id="from" class="from"></div>
     <h1 id="name"></h1>
@@ -72,9 +72,12 @@ function render(share) {
   const p = share.payload;
   const names = new Map(p.exercises.map((e) => [e.id, e.nameHe]));
   const count = p.days.reduce((n, d) => n + d.slots.length, 0);
-  $("from").textContent = share.sender ? "תוכנית מאת " + share.sender : "שיתפו איתך תוכנית";
+  const workout = p.kind === "workout";
+  $("from").textContent = workout
+    ? (share.sender ? "אימון מאת " + share.sender : "שיתפו איתך אימון")
+    : (share.sender ? "תוכנית מאת " + share.sender : "שיתפו איתך תוכנית");
   $("name").textContent = p.nameHe;
-  $("meta").textContent = p.days.length + " ימים · " + count + " תרגילים";
+  $("meta").textContent = workout ? count + " תרגילים" : p.days.length + " ימים · " + count + " תרגילים";
   for (const d of p.days) {
     const row = document.createElement("div");
     row.className = "day";
@@ -82,7 +85,8 @@ function render(share) {
     title.textContent = d.nameHe;
     const list = document.createElement("p");
     const ex = d.slots.map((s) => names.get(s.exerciseId)).filter(Boolean);
-    list.textContent = ex.slice(0, SHOWN_PER_DAY).join(" · ") + (ex.length > SHOWN_PER_DAY ? " · עוד " + (ex.length - SHOWN_PER_DAY) : "");
+    const shown = workout ? ex.length : SHOWN_PER_DAY;
+    list.textContent = ex.slice(0, shown).join(" · ") + (ex.length > shown ? " · עוד " + (ex.length - shown) : "");
     row.append(title, list);
     $("days").append(row);
   }
