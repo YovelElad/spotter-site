@@ -11,8 +11,8 @@
 <style>
 :root { --bg: #0E0F11; --surface: #1A1D20; --raised: #272A2F; --line: #383C43; --ink: #F6F7F8; --muted: #BAC0C7; --faint: #838990; --accent: #64CCD9; --tint: #0F2A2E; }
 * { box-sizing: border-box; margin: 0; }
-body { background: var(--bg); color: var(--ink); font-family: Rubik, sans-serif; font-weight: 300; min-height: 100vh; }
-main { max-width: 480px; margin: 0 auto; padding: 32px 20px 40px; display: flex; flex-direction: column; gap: 12px; min-height: 100vh; }
+body { background: var(--bg); color: var(--ink); font-family: Rubik, sans-serif; font-weight: 300; }
+main { max-width: 480px; margin: 0 auto; padding: 32px 20px 40px; display: flex; flex-direction: column; gap: 12px; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 18px; margin-bottom: 18px; }
 .logo { width: 40px; height: 40px; border-radius: 10px; background: var(--tint); color: var(--accent); display: flex; align-items: center; justify-content: center; font-family: "Barlow Condensed", sans-serif; font-size: 22px; }
 .from { color: var(--accent); font-weight: 400; font-size: 15px; }
@@ -22,12 +22,15 @@ h1 { font-size: 30px; font-weight: 400; }
 .day { padding: 12px 0; border-bottom: 1px solid var(--line); }
 .day b { font-weight: 400; font-size: 16px; }
 .day p { color: var(--faint); font-size: 13px; margin-top: 3px; }
-.spacer { flex: 1; min-height: 16px; }
+.actions { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
 .btn { height: 60px; border-radius: 999px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 17px; font-weight: 400; }
 .primary { background: var(--accent); color: var(--bg); }
 .secondary { background: var(--raised); color: var(--ink); height: 52px; font-size: 15px; }
-.hint { color: var(--faint); font-size: 13px; text-align: center; line-height: 1.5; }
-.code { font-family: "Barlow Condensed", sans-serif; font-size: 17px; color: var(--muted); letter-spacing: 1px; }
+.codebox { background: var(--surface); border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.hint { color: var(--muted); font-size: 13px; line-height: 1.5; }
+.coderow { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.code { font-family: "Barlow Condensed", sans-serif; font-size: 32px; letter-spacing: 3px; direction: ltr; }
+.copy { height: 44px; min-width: 96px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(100, 204, 217, .4); background: var(--tint); color: var(--accent); font: inherit; font-size: 15px; font-weight: 400; cursor: pointer; }
 .missing { color: var(--muted); font-size: 16px; line-height: 1.6; margin-top: 24px; }
 [hidden] { display: none !important; }
 </style>
@@ -42,10 +45,17 @@ h1 { font-size: 30px; font-weight: 400; }
     <h1 id="name"></h1>
     <div id="meta" class="meta"></div>
     <div id="days" class="days"></div>
-    <div class="spacer"></div>
-    <a id="open" class="btn primary" href="#">פתח בספוטר</a>
-    <a id="join" class="btn secondary" href="#" hidden>עוד אין לך את האפליקציה? הצטרפות לגרסת הניסיון</a>
-    <p class="hint">אחרי ההתקנה: בתוכניות, "יש לי קוד מחבר", והקלדת <span id="code" class="code"></span></p>
+    <div class="actions">
+      <a id="open" class="btn primary" href="#">פתח בספוטר</a>
+      <a id="join" class="btn secondary" href="#" hidden>עוד אין לך את האפליקציה? הצטרפות לגרסת הניסיון</a>
+    </div>
+    <div class="codebox">
+      <p class="hint">אם הכפתור לא נפתח: בספוטר, בתוכניות, "יש לי קוד מחבר", ולהדביק את הקוד.</p>
+      <div class="coderow">
+        <span id="code" class="code"></span>
+        <button id="copy" class="copy" type="button">העתקה</button>
+      </div>
+    </div>
   </section>
 </main>
 <script>
@@ -92,12 +102,24 @@ function render(share) {
   }
   $("open").href = "spotter://share/" + share.code;
   $("code").textContent = share.code;
+  $("copy").onclick = () => copy(share.code);
   if (TESTFLIGHT_URL) {
     $("join").href = TESTFLIGHT_URL;
     $("join").hidden = false;
   }
   document.title = p.nameHe + " · ספוטר";
   $("program").hidden = false;
+}
+
+async function copy(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    getSelection().selectAllChildren($("code")); // older browsers: leave it selected for the user
+    return;
+  }
+  $("copy").textContent = "הועתק";
+  setTimeout(() => ($("copy").textContent = "העתקה"), 2000);
 }
 
 load()
