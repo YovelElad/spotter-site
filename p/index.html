@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>תוכנית אימונים בספוטר</title>
+<meta property="og:title" content="תוכנית אימונים בספוטר">
+<meta property="og:description" content="קיבלת תוכנית אימונים מחבר. פתחו אותה באפליקציה.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #0E0F11; --surface: #1A1D20; --raised: #272A2F; --line: #383C43; --ink: #F6F7F8; --muted: #BAC0C7; --faint: #838990; --accent: #64CCD9; --tint: #0F2A2E; }
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: Rubik, sans-serif; font-weight: 300; min-height: 100vh; }
+main { max-width: 480px; margin: 0 auto; padding: 32px 20px 40px; display: flex; flex-direction: column; gap: 12px; min-height: 100vh; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 18px; margin-bottom: 18px; }
+.logo { width: 40px; height: 40px; border-radius: 10px; background: var(--tint); color: var(--accent); display: flex; align-items: center; justify-content: center; font-family: "Barlow Condensed", sans-serif; font-size: 22px; }
+.from { color: var(--accent); font-weight: 400; font-size: 15px; }
+h1 { font-size: 30px; font-weight: 400; }
+.meta { color: var(--muted); font-size: 14px; }
+.days { border-top: 1px solid var(--line); margin-top: 8px; }
+.day { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.day b { font-weight: 400; font-size: 16px; }
+.day p { color: var(--faint); font-size: 13px; margin-top: 3px; }
+.spacer { flex: 1; min-height: 16px; }
+.btn { height: 60px; border-radius: 999px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 17px; font-weight: 400; }
+.primary { background: var(--accent); color: var(--bg); }
+.secondary { background: var(--raised); color: var(--ink); height: 52px; font-size: 15px; }
+.hint { color: var(--faint); font-size: 13px; text-align: center; line-height: 1.5; }
+.code { font-family: "Barlow Condensed", sans-serif; font-size: 17px; color: var(--muted); letter-spacing: 1px; }
+.missing { color: var(--muted); font-size: 16px; line-height: 1.6; margin-top: 24px; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand"><span class="logo">S</span>Spotter</div>
+  <div id="loading" class="meta">טוען…</div>
+  <div id="missing" class="missing" hidden>התוכנית לא נמצאה. אולי הקישור לא שלם, או שמי ששיתף הפסיק את השיתוף.</div>
+  <section id="program" hidden style="display: contents">
+    <div id="from" class="from"></div>
+    <h1 id="name"></h1>
+    <div id="meta" class="meta"></div>
+    <div id="days" class="days"></div>
+    <div class="spacer"></div>
+    <a id="open" class="btn primary" href="#">פתח בספוטר</a>
+    <a id="join" class="btn secondary" href="#" hidden>עוד אין לך את האפליקציה? הצטרפות לגרסת הניסיון</a>
+    <p class="hint">אחרי ההתקנה: בתוכניות, "יש לי קוד מחבר", והקלדת <span id="code" class="code"></span></p>
+  </section>
+</main>
+<script>
+// Reads a shared program by its code (public.get_program_share). The key is the app's publishable key.
+const SUPABASE_URL = "https://piqljqbcnpkaqscvaebe.supabase.co";
+const SUPABASE_KEY = "sb_publishable_rdcmcRwDNNHFosgo5iuk9g_tYcaONMN";
+const TESTFLIGHT_URL = "";
+const SHOWN_PER_DAY = 3;
+
+const code = (new URLSearchParams(location.search).get("c") || "").toUpperCase();
+const $ = (id) => document.getElementById(id);
+
+async function load() {
+  if (!/^[A-Z0-9]{6}$/.test(code)) return null;
+  const res = await fetch(SUPABASE_URL + "/rest/v1/rpc/get_program_share", {
+    method: "POST",
+    headers: { apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ p_code: code }),
+  });
+  return res.ok ? res.json() : null;
+}
+
+function render(share) {
+  const p = share.payload;
+  const names = new Map(p.exercises.map((e) => [e.id, e.nameHe]));
+  const count = p.days.reduce((n, d) => n + d.slots.length, 0);
+  $("from").textContent = share.sender ? "תוכנית מאת " + share.sender : "שיתפו איתך תוכנית";
+  $("name").textContent = p.nameHe;
+  $("meta").textContent = p.days.length + " ימים · " + count + " תרגילים";
+  for (const d of p.days) {
+    const row = document.createElement("div");
+    row.className = "day";
+    const title = document.createElement("b");
+    title.textContent = d.nameHe;
+    const list = document.createElement("p");
+    const ex = d.slots.map((s) => names.get(s.exerciseId)).filter(Boolean);
+    list.textContent = ex.slice(0, SHOWN_PER_DAY).join(" · ") + (ex.length > SHOWN_PER_DAY ? " · עוד " + (ex.length - SHOWN_PER_DAY) : "");
+    row.append(title, list);
+    $("days").append(row);
+  }
+  $("open").href = "spotter://share/" + share.code;
+  $("code").textContent = share.code;
+  if (TESTFLIGHT_URL) {
+    $("join").href = TESTFLIGHT_URL;
+    $("join").hidden = false;
+  }
+  document.title = p.nameHe + " · ספוטר";
+  $("program").hidden = false;
+}
+
+load()
+  .then((share) => (share ? render(share) : ($("missing").hidden = false)))
+  .catch(() => ($("missing").hidden = false))
+  .finally(() => ($("loading").hidden = true));
+</script>
+</body>
+</html>
