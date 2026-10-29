@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>שיתוף מספוטר</title>
-<meta property="og:title" content="שיתוף מספוטר">
+<title>שיתוף מספוטליין</title>
+<meta property="og:title" content="שיתוף מספוטליין">
 <meta property="og:description" content="קיבלת תוכנית או אימון מחבר. פתחו באפליקציה.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
@@ -37,7 +37,7 @@ h1 { font-size: 30px; font-weight: 400; }
 </head>
 <body>
 <main>
-  <div class="brand"><span class="logo">S</span>Spotter</div>
+  <div class="brand"><span class="logo">S</span>Spotline</div>
   <div id="loading" class="meta">טוען…</div>
   <div id="missing" class="missing" hidden>לא מצאנו את מה ששיתפו. אולי הקישור לא שלם, או שמי ששיתף הפסיק את השיתוף.</div>
   <section id="program" hidden style="display: contents">
@@ -46,11 +46,11 @@ h1 { font-size: 30px; font-weight: 400; }
     <div id="meta" class="meta"></div>
     <div id="days" class="days"></div>
     <div class="actions">
-      <a id="open" class="btn primary" href="#">פתח בספוטר</a>
+      <a id="open" class="btn primary" href="#">פתח בספוטליין</a>
       <a id="join" class="btn secondary" href="#" hidden>עוד אין לך את האפליקציה? הצטרפות לגרסת הניסיון</a>
     </div>
     <div class="codebox">
-      <p class="hint">אם הכפתור לא נפתח: בספוטר, בתוכניות, "יש לי קוד מחבר", ולהדביק את הקוד.</p>
+      <p class="hint">אם הכפתור לא נפתח: בספוטליין, בתוכניות, "יש לי קוד מחבר", ולהדביק את הקוד.</p>
       <div class="coderow">
         <span id="code" class="code"></span>
         <button id="copy" class="copy" type="button">העתקה</button>
@@ -107,7 +107,7 @@ function render(share) {
     $("join").href = TESTFLIGHT_URL;
     $("join").hidden = false;
   }
-  document.title = p.nameHe + " · ספוטר";
+  document.title = p.nameHe + " · ספוטליין";
   $("program").hidden = false;
 }
 
