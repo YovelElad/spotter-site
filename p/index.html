@@ -4,17 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>שיתוף מספוטליין</title>
+<link rel="icon" href="/icon.png">
+<link rel="apple-touch-icon" href="/icon.png">
 <meta property="og:title" content="שיתוף מספוטליין">
+<meta property="og:image" content="https://spotlineapp.com/icon.png">
 <meta property="og:description" content="קיבלת תוכנית או אימון מחבר. פתחו באפליקציה.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500&family=Righteous&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root { --bg: #0E0F11; --surface: #1A1D20; --raised: #272A2F; --line: #383C43; --ink: #F6F7F8; --muted: #BAC0C7; --faint: #838990; --accent: #64CCD9; --tint: #0F2A2E; }
 * { box-sizing: border-box; margin: 0; }
 body { background: var(--bg); color: var(--ink); font-family: Rubik, sans-serif; font-weight: 300; }
 main { max-width: 480px; margin: 0 auto; padding: 32px 20px 40px; display: flex; flex-direction: column; gap: 12px; }
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 18px; margin-bottom: 18px; }
-.logo { width: 40px; height: 40px; border-radius: 10px; background: var(--tint); color: var(--accent); display: flex; align-items: center; justify-content: center; font-family: "Barlow Condensed", sans-serif; font-size: 22px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: Righteous, sans-serif; font-size: 22px; color: var(--accent); margin-bottom: 18px; }
+.logo { width: 40px; height: 40px; border-radius: 9px; border: 1px solid var(--line); }
 .from { color: var(--accent); font-weight: 400; font-size: 15px; }
 h1 { font-size: 30px; font-weight: 400; }
 .meta { color: var(--muted); font-size: 14px; }
@@ -37,7 +40,7 @@ h1 { font-size: 30px; font-weight: 400; }
 </head>
 <body>
 <main>
-  <div class="brand"><span class="logo">S</span>Spotline</div>
+  <div class="brand"><img class="logo" src="/icon.png" alt="">Spotline</div>
   <div id="loading" class="meta">טוען…</div>
   <div id="missing" class="missing" hidden>לא מצאנו את מה ששיתפו. אולי הקישור לא שלם, או שמי ששיתף הפסיק את השיתוף.</div>
   <section id="program" hidden style="display: contents">
