@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>הזמנה ממאמן בספוטליין</title>
+<link rel="icon" href="/icon.png">
+<link rel="apple-touch-icon" href="/icon.png">
+<meta property="og:title" content="הזמנה ממאמן בספוטליין">
+<meta property="og:image" content="https://spotlineapp.com/icon.png">
+<meta property="og:description" content="מאמן מזמין אותך להתאמן יחד. פתחו באפליקציה.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500&family=Righteous&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #0E0F11; --surface: #1A1D20; --raised: #272A2F; --line: #383C43; --ink: #F6F7F8; --muted: #BAC0C7; --faint: #838990; --accent: #64CCD9; --tint: #0F2A2E; }
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: Rubik, sans-serif; font-weight: 300; }
+main { max-width: 480px; margin: 0 auto; padding: 32px 20px 40px; display: flex; flex-direction: column; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: Righteous, sans-serif; font-size: 22px; color: var(--accent); margin-bottom: 18px; }
+.logo { width: 40px; height: 40px; border-radius: 9px; border: 1px solid var(--line); }
+.from { color: var(--accent); font-weight: 400; font-size: 15px; }
+.avatar { width: 72px; height: 72px; border-radius: 50%; background: var(--tint); border: 1px solid rgba(100, 204, 217, .4); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 400; margin-top: 4px; }
+h1 { font-size: 30px; font-weight: 400; }
+.meta { color: var(--muted); font-size: 14px; }
+.bio { color: var(--muted); font-size: 15px; line-height: 1.6; white-space: pre-line; }
+.invite { color: var(--ink); font-size: 16px; line-height: 1.6; border-top: 1px solid var(--line); padding-top: 14px; margin-top: 4px; }
+.actions { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+.btn { height: 60px; border-radius: 999px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 17px; font-weight: 400; }
+.primary { background: var(--accent); color: var(--bg); }
+.secondary { background: var(--raised); color: var(--ink); height: 52px; font-size: 15px; }
+.codebox { background: var(--surface); border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.hint { color: var(--muted); font-size: 13px; line-height: 1.5; }
+.coderow { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.code { font-family: "Barlow Condensed", sans-serif; font-size: 32px; letter-spacing: 3px; direction: ltr; }
+.copy { height: 44px; min-width: 96px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(100, 204, 217, .4); background: var(--tint); color: var(--accent); font: inherit; font-size: 15px; font-weight: 400; cursor: pointer; }
+.missing { color: var(--muted); font-size: 16px; line-height: 1.6; margin-top: 24px; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand"><img class="logo" src="/icon.png" alt="">Spotline</div>
+  <div id="loading" class="meta">טוען…</div>
+  <div id="missing" class="missing" hidden>לא מצאנו את המאמן. אולי הקישור לא שלם.</div>
+  <section id="coach" hidden style="display: contents">
+    <div class="from">הזמנה לאימון אישי</div>
+    <div id="avatar" class="avatar"></div>
+    <h1 id="name"></h1>
+    <p id="bio" class="bio" hidden></p>
+    <p id="invite" class="invite"></p>
+    <div class="actions">
+      <a id="open" class="btn primary" href="#">פתיחה בספוטליין</a>
+      <a id="join" class="btn secondary" href="#" hidden>עוד אין לך את האפליקציה? הצטרפות לגרסת הניסיון</a>
+    </div>
+    <div class="codebox">
+      <p class="hint">אם הכפתור לא נפתח: בספוטליין, בהגדרות, "המאמן שלי", ולהדביק את הקוד.</p>
+      <div class="coderow">
+        <span id="code" class="code"></span>
+        <button id="copy" class="copy" type="button">העתקה</button>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+// Reads an approved coach by invite code (public.coach_preview). The key is the app's publishable key.
+const SUPABASE_URL = "https://piqljqbcnpkaqscvaebe.supabase.co";
+const SUPABASE_KEY = "sb_publishable_rdcmcRwDNNHFosgo5iuk9g_tYcaONMN";
+const TESTFLIGHT_URL = "";
+
+const code = (new URLSearchParams(location.search).get("c") || "").toUpperCase();
+const $ = (id) => document.getElementById(id);
+
+async function load() {
+  if (!/^[A-Z0-9]{6}$/.test(code)) return null;
+  const res = await fetch(SUPABASE_URL + "/rest/v1/rpc/coach_preview", {
+    method: "POST",
+    headers: { apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ p_code: code }),
+  });
+  return res.ok ? res.json() : null;
+}
+
+function render(coach) {
+  const name = (coach.name || "").trim() || "המאמן";
+  $("avatar").textContent = Array.from(name)[0];
+  $("name").textContent = name;
+  if (coach.bio) {
+    $("bio").textContent = coach.bio;
+    $("bio").hidden = false;
+  }
+  $("invite").textContent = name + " מזמין אותך להתאמן יחד בספוטליין: לראות את האימונים שבחרת לשתף, לבנות לך תוכניות ולהגיב.";
+  $("open").href = "spotter://coach/" + coach.code;
+  $("code").textContent = coach.code;
+  $("copy").onclick = () => copy(coach.code);
+  if (TESTFLIGHT_URL) {
+    $("join").href = TESTFLIGHT_URL;
+    $("join").hidden = false;
+  }
+  document.title = name + " · ספוטליין";
+  $("coach").hidden = false;
+}
+
+async function copy(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    getSelection().selectAllChildren($("code")); // older browsers: leave it selected for the user
+    return;
+  }
+  $("copy").textContent = "הועתק";
+  setTimeout(() => ($("copy").textContent = "העתקה"), 2000);
+}
+
+load()
+  .then((coach) => (coach ? render(coach) : ($("missing").hidden = false)))
+  .catch(() => ($("missing").hidden = false))
+  .finally(() => ($("loading").hidden = true));
+</script>
+</body>
+</html>
