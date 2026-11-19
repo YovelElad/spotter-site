@@ -1,7 +1,122 @@
 <!doctype html>
+<html lang="he" dir="rtl">
+<head>
 <meta charset="utf-8">
-<meta http-equiv="refresh" content="0; url=privacy/">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Spotline</title>
-<link rel="icon" href="/icon.png">
-<link rel="apple-touch-icon" href="/icon.png">
-<a href="privacy/">Privacy Policy</a>
+<meta name="description" content="יומן אימונים בעברית: המספרים מהפעם הקודמת על כל סט, גרף לכל תרגיל, ותוכנית שמתאימה לך.">
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&family=Barlow+Condensed:wght@500&family=Righteous&display=swap">
+<style>
+  /* Layout: the app's own welcome screen, widened: a gym photo melting into the dark canvas, the wordmark,
+     the real home screen in a phone, the line and the store buttons; on wide screens the phone sits beside the text. */
+  :root {
+    --bg: #0E0F11;
+    --surface: #1A1D20;
+    --line: #272A2F;
+    --ink: #F6F7F8;
+    --muted: #BAC0C7;
+    --faint: #838990;
+    --accent: #64CCD9;
+    --gold: #DCC07F;
+    --font-body: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --font-num: "Barlow Condensed", "Rubik", system-ui, sans-serif;
+    --font-brand: "Righteous", "Rubik", system-ui, sans-serif;
+    color-scheme: dark;
+  }
+  html, body { background: var(--bg); color: var(--ink); }
+  body { font-family: var(--font-body); font-weight: 300; line-height: 1.55; overflow-x: hidden; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 10px; }
+
+  .photo { position: absolute; inset: 0 0 auto 0; height: min(78vw, 560px); overflow: hidden; pointer-events: none; }
+  .photo img { width: 100%; height: 100%; object-fit: cover; opacity: .55; filter: saturate(.45); }
+  .photo::after { content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(14,15,17,.55) 0%, rgba(14,15,17,.15) 35%, rgba(14,15,17,.7) 72%, var(--bg) 100%); }
+
+  .page { position: relative; max-width: 1080px; margin: 0 auto;
+    padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px));
+    padding-block: 28px 40px; display: flex; flex-direction: column; gap: 28px; }
+  .brand { font-family: var(--font-brand); font-size: 30px; color: var(--accent); text-align: center; margin: 0; letter-spacing: .3px; }
+
+  .hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; align-items: center; padding-top: min(22vw, 120px); }
+  .copy { display: flex; flex-direction: column; gap: 22px; min-width: 0; max-width: 520px; }
+
+
+  h1 { font-size: clamp(34px, 6vw, 52px); font-weight: 700; line-height: 1.08; margin: 0; text-wrap: balance; }
+  .lede { font-size: 18px; color: var(--muted); margin: 0; max-width: 34ch; }
+
+  .stores { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .store { display: block; height: 52px; }
+  .store img { height: 100%; width: auto; display: block; }
+  .soon { position: relative; opacity: .42; filter: grayscale(1); cursor: not-allowed; }
+  .soon-wrap { display: flex; align-items: center; gap: 10px; }
+  .tag { font-size: 13px; color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); background: color-mix(in srgb, var(--accent) 12%, transparent); border-radius: 999px; padding: 4px 12px; white-space: nowrap; }
+
+  .facts { display: flex; flex-wrap: wrap; gap: 8px 18px; padding: 0; margin: 0; list-style: none; color: var(--faint); font-size: 14px; }
+  .facts li::before { content: "·"; color: var(--accent); margin-inline-end: 8px; }
+
+  .phone { order: -1; justify-self: center; width: min(170px, 46vw); aspect-ratio: 506 / 1100; max-width: 100%; border-radius: 34px; padding: 4px; background: #2A2E33; box-shadow: 0 30px 80px rgba(0,0,0,.55); }
+  .phone img { width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 30px; display: block; }
+
+  footer { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 18px; color: var(--faint); font-size: 13px; }
+  footer nav { display: flex; gap: 18px; }
+  footer a { text-decoration: none; }
+  footer a:hover { color: var(--ink); }
+
+  @media (min-width: 860px) {
+    .hero { grid-template-columns: minmax(0, 1fr) 270px; padding-top: 150px; }
+    .phone { order: 0; width: 250px; }
+    .brand { text-align: start; }
+  }
+</style>
+<meta property="og:title" content="Spotline · יומן אימונים">
+<meta property="og:description" content="מתאמנים. האפליקציה זוכרת. המשקלים מהפעם הקודמת על כל סט, גרף לכל תרגיל ותוכנית שמתאימה לך.">
+<meta property="og:image" content="https://spotlineapp.com/screen.jpg">
+<meta property="og:url" content="https://spotlineapp.com/">
+</head>
+<body>
+
+<div class="photo" aria-hidden="true"><img src="hero.jpg" alt=""></div>
+<main class="page" dir="rtl" lang="he">
+  <p class="brand">Spotline</p>
+
+  <section class="hero">
+    <div class="copy">
+
+      <h1>מתאמנים. האפליקציה זוכרת.</h1>
+      <p class="lede">המשקלים מהפעם הקודמת מחכים על כל סט, גרף לכל תרגיל מראה לאן הגעת, ותוכנית שמתאימה לך מוכנה אחרי כמה שאלות קצרות.</p>
+
+      <div class="stores">
+        <a class="store" href="https://apps.apple.com/il/app/id6820072778" aria-label="להורדה מה־App Store">
+          <img src="appstore-he.svg" alt="הורדה מה־App Store">
+        </a>
+        <div class="soon-wrap">
+          <span class="store soon" role="link" aria-disabled="true" aria-label="Google Play, בקרוב"><img src="play-he.png" alt=""></span>
+          <span class="tag">בקרוב באנדרואיד</span>
+        </div>
+      </div>
+
+      <ul class="facts">
+        <li>חינם</li>
+        <li>עובד גם בלי אינטרנט</li>
+        <li>תזונה, משקל וחיבור למאמן באותה אפליקציה</li>
+      </ul>
+    </div>
+
+    <div class="phone"><img src="screen.jpg" alt="דף הבית של Spotline: האימון הבא בתור, עם המשקלים מהפעם הקודמת"></div>
+  </section>
+
+  <footer>
+    <span>Spotline · יומן אימונים</span>
+    <nav aria-label="קישורים">
+      <a href="privacy/">מדיניות פרטיות</a>
+      <a href="support/">תמיכה</a>
+    </nav>
+  </footer>
+</main>
+</body>
+</html>
